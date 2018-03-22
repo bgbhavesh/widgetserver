@@ -7,7 +7,7 @@ import apiRoutes from '../routes/notes.server.route';
 var mongo = require('then-mongo');
 
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/test1';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://leoquip.com:123456@ds053320.mongolab.com:53320/leoquip';
 var db = mongo(mongoUrl, ["widgets"]);
 export default db ;
 
