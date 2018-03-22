@@ -13,9 +13,22 @@ export const getNotes = (req,res) => {
 //   return res.json ({getNotes:'getNotes'})
 }
 
+export const updateNotes = (req,res) => {
+    let note = req.body;
+    console.log('updateNotes ',note)
+    db.widgets.update({_id:note._id},note,function(err,data){
+        if(data){
+            db.widgets.find({},function(err,data){
+                return res.json(data);
+            })
+        }
+        else return res.json({'success':false,'message':'Some Error'});
+    });
+}
 export const addNotes = (req,res) => {
-    let note = req.body.obj;
-    db.widgets.update({_id:note._id},note,{upsert:true},function(err,data){
+    console.log('addNotes')
+    let note = req.body;
+    db.widgets.insert(note,function(err,data){
         if(data){
             db.widgets.find({},function(err,data){
                 return res.json(data);
@@ -25,11 +38,11 @@ export const addNotes = (req,res) => {
     });
 }
 
-export const updateNotes = (req,res) => {
-    return res.json ({updateNotes:'updateNotes'})
-}
 export const removeNotes = (req,res) => {
-    db.widgets.remove({_id:req.body.id},function(err,data){
+    // console.log("removeNotes ",req.body)
+    let id = req.body.id;
+    // console.log("removeNotes ",id)
+    db.widgets.remove({_id:id},function(err,data){
         if(data){
             db.widgets.find({},function(err,data){
                 return res.json(data);

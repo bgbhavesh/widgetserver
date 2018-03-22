@@ -1,20 +1,24 @@
 // ./express-server/routes/notes.server.route.js
 import express from 'express';
 
+var bodyParser = require('body-parser')
 //import controller file
 import * as notesController from '../controllers/notes.server.controller';
 
 // get an instance of express router
-const router = express.Router();
+const app = express();
 
-router.route('/')
-     .get(notesController.getNotes)
-//      .post(notesController.addNotes)
-     //.put(notesController.updateTodo);
+app.use(bodyParser.json()) // handle json data
+app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 
-router.route('/:id')
-      .get(notesController.getNotes)
-      .delete(notesController.removeNotes);
+app.route('/widgets').get(notesController.getNotes)
+      .post(notesController.addNotes)
+app.route('/widgets/deleteWidget')
+      .post(notesController.removeNotes)
+      // .get(notesController.getNotes);
+app.route('/widgets/updateWidget')
+      .post(notesController.updateNotes)
+      // .get(notesController.getNotes);
 
 
-export default router;
+export default app;
