@@ -22,7 +22,9 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "mongo-fast-join": "0.0.11",
+    "mongodb": "^3.0.4",
     "mongojs": "^2.5.0",
+    "randomstring": "^1.1.5",
     "source-map-support": "^0.5.4",
     "then-mongo": "^3.0.2"
   }

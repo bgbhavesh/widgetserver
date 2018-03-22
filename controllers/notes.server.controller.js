@@ -2,9 +2,9 @@
 //import models
 
 //import Notes from '../models/notes.server.model';
-
-import db from '../api/app'
-
+var randomstring = require("randomstring");
+import db from '../api/app';
+var ObjectId = require('mongodb').ObjectID;
 export const getNotes = (req,res) => {
     db.widgets.find({},function(err,data){
         return res.json(data);
@@ -16,7 +16,7 @@ export const getNotes = (req,res) => {
 export const updateNotes = (req,res) => {
     let note = req.body;
     console.log('updateNotes ',note)
-    db.widgets.update({_id:note._id},note,function(err,data){
+    db.widgets.update({uid:note.uid},note,function(err,data){
         if(data){
             db.widgets.find({},function(err,data){
                 return res.json(data);
@@ -28,6 +28,7 @@ export const updateNotes = (req,res) => {
 export const addNotes = (req,res) => {
     console.log('addNotes')
     let note = req.body;
+    note.uid = randomstring.generate();
     db.widgets.insert(note,function(err,data){
         if(data){
             db.widgets.find({},function(err,data){
@@ -40,9 +41,11 @@ export const addNotes = (req,res) => {
 
 export const removeNotes = (req,res) => {
     // console.log("removeNotes ",req.body)
-    let id = req.body.id;
-    // console.log("removeNotes ",id)
-    db.widgets.remove({_id:id},function(err,data){
+    let uid = req.body.uid;
+    console.log("removeNotes ",uid)
+    db.widgets.remove({uid:uid},function(err,data){
+        console.log('err=',err);
+        console.log('data=',data);
         if(data){
             db.widgets.find({},function(err,data){
                 return res.json(data);

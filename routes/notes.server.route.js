@@ -11,12 +11,12 @@ const app = express();
 app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 
-app.route('/notes').get(notesController.getNotes)
+app.route('/widgets').get(notesController.getNotes)
       .post(notesController.addNotes)
-app.route('/notes/deleteWidget')
+app.route('/widgets/deleteWidget')
       .post(notesController.removeNotes)
       // .get(notesController.getNotes);
-app.route('/notes/updateWidget')
+app.route('/widgets/updateWidget')
       .post(notesController.updateNotes)
       // .get(notesController.getNotes);
 
