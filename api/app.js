@@ -6,8 +6,9 @@ import apiRoutes from '../routes/notes.server.route';
 // set the MONGO_URL
 var mongo = require('then-mongo');
 
-
-const mongoUrl = process.env.MONGO_URL || 'mongodb://leoquip.com:123456@ds053320.mongolab.com:53320/leoquip';
+//mongodb://<dbuser>:<dbpassword>@ds235788.mlab.com:35788/leoquipwebsite
+//const mongoUrl = process.env.MONGO_URL || 'mongodb://leoquip.com:123456@ds053320.mongolab.com:53320/leoquip';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://leoquip.com:123456@ds235788.mongolab.com:53320/leoquipwebsite';
 var db = mongo(mongoUrl, ["widgets"]);
 export default db ;
 
