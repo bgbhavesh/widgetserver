@@ -12,7 +12,7 @@ app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 
 app.route('/widgets').get(notesController.getNotes)
-      .post(notesController.addNotes)
+      .post(notesController.getNotes)
 app.route('/widgets/deleteWidget')
       .post(notesController.removeNotes)
       // .get(notesController.getNotes);
