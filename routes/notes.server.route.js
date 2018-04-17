@@ -11,8 +11,9 @@ const app = express();
 app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 
+app.route('/widgets/search').get(notesController.getNotes);
 app.route('/widgets').get(notesController.getNotes)
-      .post(notesController.getNotes)
+      //.post(notesController.getNotes)
 app.route('/widgets/deleteWidget')
       .post(notesController.removeNotes)
       // .get(notesController.getNotes);
