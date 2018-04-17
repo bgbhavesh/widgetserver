@@ -6,7 +6,7 @@ var randomstring = require("randomstring");
 import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getNotes = (req,res) => {
-    console.log(req);
+    console.log(req.body);
     if(req && req.body && req.body.searchText){
          db.widgets.find({ $text: { $search: req.body.searchText } },function(err,data){
             return res.json(data);
@@ -25,7 +25,7 @@ export const getNotes = (req,res) => {
 export const updateNotes = (req,res) => {
     let note = req.body;
     console.log('updateNotes ',note)
-    console.log(req);
+    console.log(req.body);
     db.widgets.update({uid:note.uid},note,function(err,data){
         if(data){
             db.widgets.find({},function(err,data){
