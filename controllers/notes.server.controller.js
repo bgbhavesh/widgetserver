@@ -8,7 +8,7 @@ var ObjectId = require('mongodb').ObjectID;
 export const getNotes = (req,res) => {
     console.log(req.body);
     if(req && req.body && req.body.searchText){
-         db.widgets.find({ $text: { $search: req.body.searchText } },function(err,data){
+         db.widgets.find({ $or:[{name:req.body.searchText},{description:req.body.searchText}] },function(err,data){
             return res.json(data);
         });
     }
