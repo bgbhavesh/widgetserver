@@ -6,9 +6,17 @@ var randomstring = require("randomstring");
 import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getNotes = (req,res) => {
-    db.widgets.find({},function(err,data){
-        return res.json(data);
-    });
+    if(req && req.body && req.body.searchText){
+         db.widgets.find({ $text: { $search: req.body.searchText } },function(err,data){
+            return res.json(data);
+        });
+    }
+    else{
+        db.widgets.find({},function(err,data){
+            return res.json(data);
+        });
+    }
+    
     // console.log('getNotes')
 //   return res.json ({getNotes:'getNotes'})
 }
