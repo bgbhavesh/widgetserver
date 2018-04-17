@@ -7,7 +7,6 @@ import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getNotes = (req,res) => {
     let note = req.body;
-    console.log(note);
     if(req && req.body && req.body.searchText && req.body.searchText!=''){
         console.log(note);
          db.widgets.find({ $or:[{name:note.searchText},{description:note.searchText}] },function(err,data){
@@ -38,7 +37,6 @@ export const updateNotes = (req,res) => {
     });
 }
 export const addNotes = (req,res) => {
-    console.log('addNotes')
     let note = req.body;
     note.uid = randomstring.generate();
     db.widgets.insert(note,function(err,data){
@@ -52,9 +50,7 @@ export const addNotes = (req,res) => {
 }
 
 export const removeNotes = (req,res) => {
-    // console.log("removeNotes ",req.body)
     let uid = req.body.uid;
-    console.log("removeNotes ",uid)
     db.widgets.remove({uid:uid},function(err,data){
         console.log('err=',err);
         console.log('data=',data);
