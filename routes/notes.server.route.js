@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 
 app.route('/widgets/search').get(notesController.getNotes);
 app.route('/widgets').get(notesController.getNotes)
-      //.post(notesController.getNotes)
+      .post(notesController.updateNotes)
 app.route('/widgets/deleteWidget')
       .post(notesController.removeNotes)
       // .get(notesController.getNotes);
