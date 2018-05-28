@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
 //// common
 app.route('/common/search').post(commonController.getAllItems);
 app.route('/common').get(commonController.getAllItems)
-      .post(commonController.addAnItem)
+app.route('/common/add').post(commonController.addAnItem)
 app.route('/common/delete')
       .post(commonController.removeAnItem)
 // .get(notesController.getNotes);
