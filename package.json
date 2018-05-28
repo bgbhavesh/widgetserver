@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app_hooked.js"
+    "start": "app_hooked.js"
   },
   "engines": {
     "node": "8.9.4"
@@ -24,6 +24,7 @@
     "mongo-fast-join": "0.0.11",
     "mongodb": "^3.0.4",
     "mongojs": "^2.5.0",
+    "nodemon": "^1.17.5",
     "randomstring": "^1.1.5",
     "source-map-support": "^0.5.4",
     "then-mongo": "^3.0.2"
