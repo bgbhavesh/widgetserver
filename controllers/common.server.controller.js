@@ -35,9 +35,9 @@ export const updateAnItem = (req, res) => {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
     console.log('reqJson ', reqJson)
-    db.widgets.update({ uid: reqJson.uid }, reqJson, function (err, data) {
+    let reqModel = reqJson.model || 'widgets'
+        db[reqModel].find.update({ uid: reqJson.uid }, reqJson, function (err, data) {
         if (data) {
-            let reqModel = reqJson.model || 'widgets'
             db[reqModel].find({}, function (err, data) {
                 return res.json(data);
             })
