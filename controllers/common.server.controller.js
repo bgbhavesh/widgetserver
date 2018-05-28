@@ -7,7 +7,7 @@ import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getAllItems = (req, res) => {
     let reqJson = req.body;
-        console.log("reqJson", reqJson);
+        console.log("req.params", req.params);
     if (req && reqJson && reqJson.searchText && reqJson.searchText != '') {
         let reqModel = reqJson.model || 'widgets'
         db[reqModel].find({ $or: [{ name: reqJson.searchText }, { description: reqJson.searchText }] }, function (err, data) {
