@@ -6,23 +6,24 @@ var randomstring = require("randomstring");
 import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getAllItems = (req, res) => {
-    let reqJson = req.body;
-    if (req && reqJson && reqJson.searchText && reqJson.searchText != '') {
-        let reqModel = reqJson.model || 'widgets'
-        console.log("reqJson", reqJson);
-        db[reqModel].find({ $or: [{ name: reqJson.searchText }, { description: reqJson.searchText }] }, function (err, data) {
+    let reqData = req.body;
+    // console.log("reqData", reqData);
+    if (req && reqData && reqData.searchText && reqData.searchText != '') {
+        let reqModel = reqData.model || 'widgets'
+        // console.log("reqData", reqData);
+        db[reqModel].find({ $or: [{ name: reqData.searchText }, { description: reqData.searchText }] }, function (err, data) {
             return res.json(data);
         });
     }
     else {
-        let reqModel = reqJson.model || 'widgets'
+        let reqModel = reqData.model || 'widgets'
         db[reqModel].find({}, function (err, data) {
             return res.json(data);
         });
     }
-    // if (req && reqJson) {
-    //     console.log(reqJson);
-    //     let reqModel = reqJson.model || 'widgets'
+    // if (req && reqData) {
+    //     console.log(reqData);
+    //     let reqModel = reqData.model || 'widgets'
     //     db[reqModel].find({}, function (err, data) {
     //         return res.json(data);
     //     });
@@ -30,14 +31,14 @@ export const getAllItems = (req, res) => {
 
 }
 export const updateAnItem = (req, res) => {
-    let reqJson = req.body;
-    if (!reqJson || !reqJson.model) {
+    let reqData = req.body;
+    if (!reqData || !reqData.model) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
-    console.log('reqJson ', reqJson)
-    db.widgets.update({ uid: reqJson.uid }, reqJson, function (err, data) {
+    // console.log('reqData ', reqData)
+    let reqModel = reqData.model || 'widgets'
+        db[reqModel].update({ uid: reqData.item.uid }, reqData.item, function (err, data) {
         if (data) {
-            let reqModel = reqJson.model || 'widgets'
             db[reqModel].find({}, function (err, data) {
                 return res.json(data);
             })
@@ -46,13 +47,14 @@ export const updateAnItem = (req, res) => {
     });
 }
 export const addAnItem = (req, res) => {
-    let reqJson = req.body;
-    if (!reqJson || !reqJson.model) {
+    let reqData = req.body;
+    // console.log("reqData", reqData);
+    if (!reqData || !reqData.model || !reqData.item) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
-    reqJson.uid = randomstring.generate();
-    let reqModel = reqJson.model || 'widgets'
-    db[reqModel].insert(reqJson, function (err, data) {
+    reqData.uid = randomstring.generate();
+    let reqModel = reqData.model || 'widgets'
+    db[reqModel].insert(reqData.item, function (err, data) {
         if (data) {
             db[reqModel].find({}, function (err, data) {
                 return res.json(data);
@@ -64,14 +66,14 @@ export const addAnItem = (req, res) => {
 
 export const removeAnItem = (req, res) => {
     let uid = req.body.uid;
-    let reqJson = req.body;
-    if (!reqJson || !reqJson.model) {
+    let reqData = req.body;
+    if (!reqData || !reqData.model) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
-    let reqModel = reqJson.model || 'widgets'
-    db[reqModel].remove({ uid: uid }, function (err, data) {
-        console.log('err=', err);
-        console.log('data=', data);
+    let reqModel = reqData.model || 'widgets'
+    db[reqModel].remove({ uid: reqData.uid }, function (err, data) {
+        // console.log('err=', err);
+        // console.log('data=', data);
         if (data) {
             db[reqModel].find({}, function (err, data) {
                 return res.json(data);
