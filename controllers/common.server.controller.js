@@ -6,8 +6,8 @@ var randomstring = require("randomstring");
 import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getAllItems = (req, res) => {
-    let reqData = req.body;
-    // console.log("reqData", reqData);
+    let reqData = req;
+    console.log("reqData", req);
     if (req && reqData && reqData.searchText && reqData.searchText != '') {
         let reqModel = reqData.model || 'widgets'
         // console.log("reqData", reqData);
@@ -32,12 +32,18 @@ export const getAllItems = (req, res) => {
 }
 export const updateAnItem = (req, res) => {
     let reqData = req.body;
+    // check(req.model, String)
+    // check(req, Object)
+    // check(req, {
+    //     model: String,
+    //     item: Object
+    // })
     if (!reqData || !reqData.model) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
     // console.log('reqData ', reqData)
     let reqModel = reqData.model || 'widgets'
-        db[reqModel].update({ uid: reqData.item.uid }, reqData.item, function (err, data) {
+    db[reqModel].update({ uid: reqData.item.uid }, reqData.item, function (err, data) {
         if (data) {
             db[reqModel].find({}, function (err, data) {
                 return res.json(data);
@@ -48,7 +54,7 @@ export const updateAnItem = (req, res) => {
 }
 export const addAnItem = (req, res) => {
     let reqData = req.body;
-    // console.log("reqData", reqData);
+    console.log("reqData", req);
     if (!reqData || !reqData.model || !reqData.item) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
