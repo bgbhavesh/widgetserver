@@ -7,28 +7,21 @@ import db from '../api/app';
 var ObjectId = require('mongodb').ObjectID;
 export const getAllItems = (req, res) => {
     let reqData = req;
-    console.log("reqData", req);
+    let reqModel = reqData.model || 'widgets'
+    let queryArray = [
+        function (err, data) {
+            return res.json(data);
+        }
+    ];
     if (req && reqData && reqData.searchText && reqData.searchText != '') {
-        let reqModel = reqData.model || 'widgets'
-        // console.log("reqData", reqData);
-        db[reqModel].find({ $or: [{ name: reqData.searchText }, { description: reqData.searchText }] }, function (err, data) {
-            return res.json(data);
-        });
+        queryArray.push({ $or: [{ name: reqData.searchText }, { description: reqData.searchText }] })
     }
-    else {
-        let reqModel = reqData.model || 'widgets'
-        db[reqModel].find({}, function (err, data) {
-            return res.json(data);
-        });
-    }
-    // if (req && reqData) {
-    //     console.log(reqData);
-    //     let reqModel = reqData.model || 'widgets'
-    //     db[reqModel].find({}, function (err, data) {
-    //         return res.json(data);
-    //     });
-    // }
+    queryArray.unshift({})
 
+
+
+    console.log(queryArray)
+    db[reqModel].find(queryArray);
 }
 export const updateAnItem = (req, res) => {
     let reqData = req.body;
