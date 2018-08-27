@@ -63,7 +63,7 @@ var getAggregationArray = function (req) {
 export const getAllItems = (req, res) => {
     let reqData = req.body.options;
     let reqModel = reqData.model //|| 'widgets';
-    console.log(reqData);
+    // console.log(reqData);
     let aggregateArray = getAggregationArray(reqData);
     // console.log(aggregateArray);
     db[reqModel].aggregate(aggregateArray,function (err, data) {
@@ -71,16 +71,16 @@ export const getAllItems = (req, res) => {
         return res.json(data);
     });
 }
-export const getAnItems = (req, res) => {
-    let reqData = req.body.options;
-    console.log(reqData);
-    let reqModel = reqData.model //|| 'widgets';
-    let aggregateArray = getAggregationArray(req);
-    db[reqModel].find({ uid: reqData.uid },function (err, data) {
-        // console.log(data);
-        return res.json(data);
-    });
-}
+// export const getAnItems = (req, res) => {
+//     let reqData = req.body.options;
+//     // console.log(reqData);
+//     let reqModel = reqData.model //|| 'widgets';
+//     let aggregateArray = getAggregationArray(req);
+//     db[reqModel].find({ uid: reqData.uid },function (err, data) {
+//         // console.log(data);
+//         return res.json(data);
+//     });
+// }
 export const updateAnItem = (req, res) => {
     let reqData = req.body.options;
     if (!reqData || !reqData.model) {
@@ -91,28 +91,30 @@ export const updateAnItem = (req, res) => {
     reqData.item.updatedAt = new Date();
     db[reqModel].update({ uid: reqData.uid }, reqData.item, function (err, data) {
         if (data) {
-            db[reqModel].find({}, function (err, data) {
+            let aggregateArray = getAggregationArray(reqData);
+            db[reqModel].aggregate(aggregateArray,function (err, data) {
                 return res.json(data);
-            })
+            });
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
 }
 export const addAnItem = (req, res) => {
     let reqData = req.body.options;
-    if (!(reqData && reqData.model && reqData.item)) {
+    if (!(reqData && reqData.model && reqData.data)) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
-    reqData.item.uid = randomstring.generate();
-    reqData.item.createdAt = new Date();
-    reqData.item.updateAt = new Date();
+    reqData.data.uid = randomstring.generate();
+    reqData.data.createdAt = new Date();
+    reqData.data.updateAt = new Date();
     let reqModel = reqData.model //|| 'widgets'
-    console.log("reqModel", reqModel);
-    db[reqModel].insert(reqData.item, function (err, data) {
+    console.log("reqModel", reqData);
+    db[reqModel].insert(reqData.data, function (err, data) {
         if (data) {
-            db[reqModel].find({}, function (err, data) {
+            let aggregateArray = getAggregationArray(reqData);
+            db[reqModel].aggregate(aggregateArray,function (err, data) {
                 return res.json(data);
-            })
+            });
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
@@ -127,9 +129,10 @@ export const removeAnItem = (req, res) => {
     let reqModel = reqData.model //|| 'widgets'
     db[reqModel].remove({ uid: reqData.uid }, function (err, data) {
         if (data) {
-            db[reqModel].find({}, function (err, data) {
+            let aggregateArray = getAggregationArray(reqData);
+            db[reqModel].aggregate(aggregateArray,function (err, data) {
                 return res.json(data);
-            })
+            });
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
