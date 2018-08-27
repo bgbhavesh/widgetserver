@@ -17,27 +17,38 @@ var ObjectId = require('mongodb').ObjectID;
 // reqDemo.item;
 // reqDemo.itemId;
 // reqDemo.uid
-var createSearchQuery = function (searchText, caseSensitive) {
-    // if(!searchText || searchText==="" || !searchFields || searchFields.length === 0 ) return false;
-    return  { $text: { $search: searchText, $caseSensitive: caseSensitive } }
+var createSearchQuery = function (reqData) {    
+    let searchText = reqData.searchText || "";
+    let searchFields = reqData.searchFields || false;
+    let caseSensitive = reqData.caseSensitive|| false ;
+    if(!searchText || searchText==="" || !searchFields || searchFields.length === 0 ) 
+        return false;
+    let searchQueryArray = [];
+    let searchTextArray = searchText.split(" ");
+    for(let i=0;i<searchFields.length;i++){
+        for(let j=0;j<searchTextArray.length;j++){
+            let singleQuery = {[searchFields[i]]: {$regex :searchTextArray[j]} }
+            if(caseSensitive){
+                _.extend(singleQuery,{$option:"i"})
+            }
+            searchQueryArray.push(singleQuery);
+        }
+    }    
+    // console.log(searchQueryArray)
+    return  { $or: searchQueryArray }
 }
 var getAggregationArray = function (req) {
     let reqData = req;
     let match = reqData.match || {};
-    let limit = reqData.limit || 0;
+    let limit = reqData.limit || 10;    
     let skip = reqData.skip || 0;
     let sort = reqData.sort || {createdBy: -1};
     let project = reqData.project || 0;
-    let searchText = reqData.searchText || "";
-    let searchFields = reqData.searchFields || false;
     let aggregateArray = []
-    let searchQuery = createSearchQuery(searchText, searchFields)
-    
+    let searchQuery = createSearchQuery(reqData)    
     match = _.extend(match,searchQuery);
-    console.log(match)
     aggregateArray.push({$match:match});
     aggregateArray.push({$sort:sort});
-
     if(skip){
         aggregateArray.push({$skip:skip});
     }
@@ -49,13 +60,12 @@ var getAggregationArray = function (req) {
     }
     return aggregateArray;
 }
-
 export const getAllItems = (req, res) => {
     let reqData = req.body.options;
     let reqModel = reqData.model //|| 'widgets';
     console.log(reqData);
     let aggregateArray = getAggregationArray(reqData);
-    
+    // console.log(aggregateArray);
     db[reqModel].aggregate(aggregateArray,function (err, data) {
         // console.log(data);
         return res.json(data);
