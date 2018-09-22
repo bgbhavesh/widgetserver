@@ -17,56 +17,56 @@ var ObjectId = require('mongodb').ObjectID;
 // reqDemo.item;
 // reqDemo.itemId;
 // reqDemo.uid
-var createSearchQuery = function (reqData) {    
+var createSearchQuery = function (reqData) {
     let searchText = reqData.searchText || "";
     let searchFields = reqData.searchFields || false;
-    let caseSensitive = reqData.caseSensitive|| false ;
-    if(!searchText || searchText==="" || !searchFields || searchFields.length === 0 ) 
+    let caseSensitive = reqData.caseSensitive || false;
+    if (!searchText || searchText === "" || !searchFields || searchFields.length === 0)
         return false;
     let searchQueryArray = [];
     let searchTextArray = searchText.split(" ");
-    for(let i=0;i<searchFields.length;i++){
-        for(let j=0;j<searchTextArray.length;j++){
-            let singleQuery = {[searchFields[i]]: {$regex :searchTextArray[j]} }
-            if(caseSensitive){
-                _.extend(singleQuery,{$option:"i"})
+    for (let i = 0; i < searchFields.length; i++) {
+        for (let j = 0; j < searchTextArray.length; j++) {
+            let singleQuery = { [searchFields[i]]: { $regex: searchTextArray[j] } }
+            if (caseSensitive) {
+                _.extend(singleQuery, { $option: "i" })
             }
             searchQueryArray.push(singleQuery);
         }
-    }    
+    }
     // console.log(searchQueryArray)
-    return  { $or: searchQueryArray }
+    return { $or: searchQueryArray }
 }
 var getAggregationArray = function (req) {
     let reqData = req;
     let match = reqData.match || {};
-    let limit = reqData.limit || 10;    
+    let limit = reqData.limit || 10;
     let skip = reqData.skip || 0;
-    let sort = reqData.sort || {createdBy: -1};
+    let sort = reqData.sort || { createdBy: -1 };
     let project = reqData.project || 0;
     let aggregateArray = []
-    let searchQuery = createSearchQuery(reqData)    
-    match = _.extend(match,searchQuery);
-    aggregateArray.push({$match:match});
-    aggregateArray.push({$sort:sort});
-    if(skip){
-        aggregateArray.push({$skip:skip});
+    let searchQuery = createSearchQuery(reqData)
+    match = _.extend(match, searchQuery);
+    aggregateArray.push({ $match: match });
+    aggregateArray.push({ $sort: sort });
+    if (skip) {
+        aggregateArray.push({ $skip: skip });
     }
-    if(limit){
-        aggregateArray.push({$limit:limit});
+    if (limit) {
+        aggregateArray.push({ $limit: limit });
     }
-    if(project){
-        aggregateArray.push({$project:project});
+    if (project) {
+        aggregateArray.push({ $project: project });
     }
     return aggregateArray;
 }
-export const getAllItems = (req, res) => {
+exports.getAllItems = (req, res) => {
     let reqData = req.body.options;
     let reqModel = reqData.model //|| 'widgets';
     // console.log(reqData);
     let aggregateArray = getAggregationArray(reqData);
     // console.log(aggregateArray);
-    db[reqModel].aggregate(aggregateArray,function (err, data) {
+    db[reqModel].aggregate(aggregateArray, function (err, data) {
         // console.log(data);
         return res.json(data);
     });
@@ -81,25 +81,22 @@ export const getAllItems = (req, res) => {
 //         return res.json(data);
 //     });
 // }
-export const updateAnItem = (req, res) => {
+exports.updateAnItem = (req, res) => {
     let reqData = req.body.options;
     if (!reqData || !reqData.model) {
         return res.json({ 'success': false, 'message': 'Model Error' });
     }
     let reqModel = reqData.model //|| 'widgets';
-    reqData.uid = reqData.uid || reqData.item.uid; 
+    reqData.uid = reqData.uid || reqData.item.uid;
     reqData.item.updatedAt = new Date();
     db[reqModel].update({ uid: reqData.uid }, reqData.item, function (err, data) {
         if (data) {
-            let aggregateArray = getAggregationArray(reqData);
-            db[reqModel].aggregate(aggregateArray,function (err, data) {
-                return res.json(data);
-            });
+            getAllItems(req, res)
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
 }
-export const addAnItem = (req, res) => {
+exports.addAnItem = (req, res) => {
     let reqData = req.body.options;
     if (!(reqData && reqData.model && reqData.data)) {
         return res.json({ 'success': false, 'message': 'Model Error' });
@@ -111,16 +108,15 @@ export const addAnItem = (req, res) => {
     console.log("reqModel", reqData);
     db[reqModel].insert(reqData.data, function (err, data) {
         if (data) {
-            let aggregateArray = getAggregationArray(reqData);
-            db[reqModel].aggregate(aggregateArray,function (err, data) {
-                return res.json(data);
-            });
+            if (data) {
+                getAllItems(req, res)
+            }
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
 }
 
-export const removeAnItem = (req, res) => {
+exports.removeAnItem = (req, res) => {
     let uid = req.body.options.uid;
     let reqData = req.body.options;
     if (!reqData || !reqData.model) {
@@ -129,10 +125,9 @@ export const removeAnItem = (req, res) => {
     let reqModel = reqData.model //|| 'widgets'
     db[reqModel].remove({ uid: reqData.uid }, function (err, data) {
         if (data) {
-            let aggregateArray = getAggregationArray(reqData);
-            db[reqModel].aggregate(aggregateArray,function (err, data) {
-                return res.json(data);
-            });
+            if (data) {
+                getAllItems(req, res)
+            }
         }
         else return res.json({ 'success': false, 'message': 'Some Error' });
     });
