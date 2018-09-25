@@ -48,6 +48,8 @@ var getAggregationArray = function (req) {
     let searchQuery = createSearchQuery(reqData)
     match = _.extend(match, searchQuery);
     aggregateArray.push({ $match: match });
+    var matchQuery = _.concat([], aggregateArray)
+    matchQuery.push({$count:"totalRecords"})
     aggregateArray.push({ $sort: sort });
     if (skip) {
         aggregateArray.push({ $skip: skip });
@@ -58,17 +60,26 @@ var getAggregationArray = function (req) {
     if (project) {
         aggregateArray.push({ $project: project });
     }
-    return aggregateArray;
+
+    return {matchQuery, aggregateArray};
 }
 exports.getAllItems = (req, res) => {
     let reqData = req.body.options;
     let reqModel = reqData.model //|| 'widgets';
     // console.log(reqData);
-    let aggregateArray = getAggregationArray(reqData);
-    // console.log(aggregateArray);
-    db[reqModel].aggregate(aggregateArray, function (err, data) {
-        // console.log(data);
-        return res.json(data);
+    let aggregateQueries = getAggregationArray(reqData);
+    console.log(aggregateQueries)
+    db[reqModel].aggregate(aggregateQueries.matchQuery, function (err, rawData) {
+        console.log(rawData);        
+        if (rawData && rawData[0] && rawData[0].totalRecords) {
+            db[reqModel].aggregate(aggregateQueries.aggregateArray, function (err, records) {
+                // console.log(data);
+                return res.json({records, totalRecords:rawData[0]});
+            });    
+        } else {
+            return res.json(rawData);
+        }
+        
     });
 }
 // export const getAnItems = (req, res) => {
