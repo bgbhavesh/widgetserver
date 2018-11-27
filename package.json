@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "react-scripts test",
-    "start": "node app_hooked.js",
+    "start": "node --inspect app_hooked.js",
     "start_client": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
@@ -24,6 +24,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.26.0",
     "body-parser": "^1.18.2",
+    "crud-controler-bg": "^1.0.3",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
     "mongo-fast-join": "0.0.11",
@@ -31,12 +32,6 @@
     "mongojs": "^2.5.0",
     "prop-types": "^15.5.10",
     "randomstring": "^1.1.5",
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0",
-    "react-redux": "^5.0.5",
-    "redux": "^3.5.2",
-    "redux-thunk": "^2.2.0",
-    "sanitize.css": "4.1.0",
     "source-map-support": "^0.5.4",
     "then-mongo": "^3.0.2",
     "underscore": "^1.9.1"
