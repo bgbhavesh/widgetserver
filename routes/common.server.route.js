@@ -14,7 +14,7 @@ var db = mongo(mongoUrl, config.collectionsList);
 var bodyParser = require('body-parser')
 //import controller file
 //import * as commonController from '../controllers/common.server.controller';
-var commonController = require('crud-controler-bg')
+var commonController = require('controler-crud-bg')
 // get an instance of express router
 const app = express();
 
